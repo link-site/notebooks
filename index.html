@@ -40,7 +40,7 @@
           </div>
 
           <div class="flex items-center gap-4">
-            <button onclick="navigateTo('login')" class="text-gray-500 hover:text-gray-900 flex items-center gap-1 text-sm font-medium">
+            <button onclick="window.navigateTo('login')" class="text-gray-500 hover:text-gray-900 flex items-center gap-1 text-sm font-medium">
               <i data-lucide="settings" class="w-5 h-5"></i> <span class="hidden md:inline">Admin</span>
             </button>
           </div>
@@ -56,7 +56,7 @@
       <div id="no-products" class="hidden text-center py-20">
         <i data-lucide="search" class="mx-auto h-12 w-12 text-gray-300 mb-4"></i>
         <h3 class="text-lg font-medium text-gray-900">Nenhum produto encontrado</h3>
-        <button onclick="clearSearch()" class="mt-4 text-orange-600 hover:text-orange-500 font-medium">Limpar busca</button>
+        <button onclick="window.clearSearch()" class="mt-4 text-orange-600 hover:text-orange-500 font-medium">Limpar busca</button>
       </div>
     </main>
 
@@ -124,7 +124,7 @@
         </form>
 
         <div class="mt-6">
-          <button onclick="navigateTo('home')" class="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+          <button onclick="window.navigateTo('home')" class="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
             <i data-lucide="arrow-left" class="h-4 w-4 mr-2"></i> Voltar para a loja
           </button>
         </div>
@@ -140,16 +140,16 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
           <div class="flex items-center gap-4">
-            <button onclick="navigateTo('home')" class="text-gray-500 hover:text-gray-900">
+            <button onclick="window.navigateTo('home')" class="text-gray-500 hover:text-gray-900">
               <i data-lucide="arrow-left" class="h-6 w-6"></i>
             </button>
             <span class="font-bold text-xl tracking-tight">Admin - <span class="text-orange-500">Produtos</span></span>
           </div>
           <div class="flex items-center gap-4">
-            <button onclick="showAdminForm()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600">
+            <button onclick="window.showAdminForm()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600">
               <i data-lucide="plus" class="h-4 w-4 mr-2"></i> Novo Produto
             </button>
-            <button onclick="logout()" class="inline-flex items-center p-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" title="Sair">
+            <button onclick="window.logout()" class="inline-flex items-center p-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50" title="Sair">
               <i data-lucide="log-out" class="h-5 w-5"></i>
             </button>
           </div>
@@ -177,7 +177,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700">URL da Imagem</label>
             <div class="mt-1 flex gap-3 items-start">
-              <input type="url" id="edit-image" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2" oninput="updateImagePreview()">
+              <input type="url" id="edit-image" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2" oninput="window.updateImagePreview()">
               <div class="h-10 w-10 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">
                 <img id="image-preview" src="" class="h-full w-full object-contain hidden">
                 <i data-lucide="image" id="image-placeholder" class="h-5 w-5 text-gray-400"></i>
@@ -203,7 +203,7 @@
             </label>
           </div>
           <div class="md:col-span-2 flex justify-end gap-3 mt-4">
-            <button type="button" onclick="hideAdminForm()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
+            <button type="button" onclick="window.hideAdminForm()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
             <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700">
               <i data-lucide="save" class="h-4 w-4 mr-2"></i> Salvar
             </button>
@@ -222,7 +222,22 @@
   <!-- ========================================== -->
   <!-- SCRIPTS E LÓGICA                           -->
   <!-- ========================================== -->
-  <script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+    import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCq7w7D8LQzNJp5VMcytqnW4CZUE7jgNAw",
+      authDomain: "pag-divulga.firebaseapp.com",
+      projectId: "pag-divulga",
+      storageBucket: "pag-divulga.firebasestorage.app",
+      messagingSenderId: "657448115725",
+      appId: "1:657448115725:web:4e89f33d1902bcff5eff44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
     // Dados Iniciais
     const INITIAL_PRODUCTS = [
       { id: 1, title: "Sony WH-1000XM5 Wireless Noise Canceling Headphones", description: "Industry-leading noise cancellation with two processors controlling 8 microphones for unprecedented noise cancellation.", price: 398.00, rating: 4.8, reviews: 12453, image: "https://picsum.photos/seed/headphones/600/600", category: "Eletrônicos", amazonLink: "https://amazon.com", badge: "Mais Vendido" },
@@ -234,16 +249,39 @@
     ];
 
     // Estado da Aplicação
-    let products = JSON.parse(localStorage.getItem('amazon_affiliate_products')) || INITIAL_PRODUCTS;
+    let products = [];
     let isAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
 
     // Configura o ano no rodapé
     document.getElementById('year').textContent = new Date().getFullYear();
 
     // ==========================================
+    // FIREBASE SYNC
+    // ==========================================
+    const productsCol = collection(db, 'products');
+    onSnapshot(productsCol, (snapshot) => {
+      products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // Seed initial data se estiver vazio
+      if (products.length === 0 && !localStorage.getItem('firebase_seeded')) {
+        INITIAL_PRODUCTS.forEach(async (p) => {
+          await setDoc(doc(productsCol, p.id.toString()), p);
+        });
+        localStorage.setItem('firebase_seeded', 'true');
+      }
+
+      // Atualiza a interface ativa
+      if (document.getElementById('home-view').classList.contains('active')) {
+        window.renderHomeProducts(document.getElementById('search-input').value);
+      } else if (document.getElementById('admin-view').classList.contains('active')) {
+        window.renderAdminProducts();
+      }
+    });
+
+    // ==========================================
     // NAVEGAÇÃO
     // ==========================================
-    function navigateTo(viewId) {
+    window.navigateTo = function(viewId) {
       if (viewId === 'admin' && !isAuthenticated) {
         viewId = 'login';
       }
@@ -251,17 +289,17 @@
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.getElementById(viewId + '-view').classList.add('active');
       
-      if (viewId === 'home') renderHomeProducts();
-      if (viewId === 'admin') renderAdminProducts();
+      if (viewId === 'home') window.renderHomeProducts();
+      if (viewId === 'admin') window.renderAdminProducts();
       
       lucide.createIcons();
       window.scrollTo(0, 0);
-    }
+    };
 
     // ==========================================
     // HOME VIEW (LOJA)
     // ==========================================
-    function renderHomeProducts(search = '') {
+    window.renderHomeProducts = function(search = '') {
       const grid = document.getElementById('products-grid');
       const noProd = document.getElementById('no-products');
       grid.innerHTML = '';
@@ -280,7 +318,6 @@
         noProd.classList.add('hidden');
         
         filtered.forEach(p => {
-          // Gera as estrelas
           const stars = Array(5).fill(0).map((_, i) => 
             `<i data-lucide="star" class="h-4 w-4 ${i < Math.floor(p.rating || 5) ? 'fill-current text-yellow-400' : 'text-gray-300'}"></i>`
           ).join('');
@@ -311,14 +348,13 @@
         });
       }
       lucide.createIcons();
-    }
+    };
 
-    // Busca
-    document.getElementById('search-input').addEventListener('input', (e) => renderHomeProducts(e.target.value));
-    function clearSearch() {
+    document.getElementById('search-input').addEventListener('input', (e) => window.renderHomeProducts(e.target.value));
+    window.clearSearch = function() {
       document.getElementById('search-input').value = '';
-      renderHomeProducts();
-    }
+      window.renderHomeProducts();
+    };
 
     // ==========================================
     // LOGIN VIEW
@@ -334,22 +370,22 @@
         document.getElementById('login-error').classList.add('hidden');
         document.getElementById('username').value = '';
         document.getElementById('password').value = '';
-        navigateTo('admin');
+        window.navigateTo('admin');
       } else {
         document.getElementById('login-error').classList.remove('hidden');
       }
     });
 
-    function logout() {
+    window.logout = function() {
       isAuthenticated = false;
       localStorage.removeItem('admin_authenticated');
-      navigateTo('home');
-    }
+      window.navigateTo('home');
+    };
 
     // ==========================================
     // ADMIN VIEW
     // ==========================================
-    function renderAdminProducts() {
+    window.renderAdminProducts = function() {
       const list = document.getElementById('admin-products-list');
       list.innerHTML = '';
       
@@ -367,17 +403,17 @@
                 </div>
               </div>
               <div class="flex items-center gap-2">
-                <button onclick="editProduct(${p.id})" class="p-2 text-gray-400 hover:text-blue-600 rounded-full hover:bg-blue-50"><i data-lucide="edit-2" class="h-5 w-5"></i></button>
-                <button onclick="deleteProduct(${p.id})" class="p-2 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50"><i data-lucide="trash-2" class="h-5 w-5"></i></button>
+                <button onclick="editProduct('${p.id}')" class="p-2 text-gray-400 hover:text-blue-600 rounded-full hover:bg-blue-50"><i data-lucide="edit-2" class="h-5 w-5"></i></button>
+                <button onclick="deleteProduct('${p.id}')" class="p-2 text-gray-400 hover:text-red-600 rounded-full hover:bg-red-50"><i data-lucide="trash-2" class="h-5 w-5"></i></button>
               </div>
             </li>
           `;
         });
       }
       lucide.createIcons();
-    }
+    };
 
-    function showAdminForm(product = null) {
+    window.showAdminForm = function(product = null) {
       document.getElementById('admin-form-container').classList.remove('hidden');
       document.getElementById('admin-form-title').textContent = product ? 'Editar Produto' : 'Adicionar Novo Produto';
       
@@ -391,11 +427,11 @@
       document.getElementById('edit-badge').value = product && product.badge ? product.badge : '';
       document.getElementById('edit-hidden').checked = product && product.hidden ? true : false;
       
-      updateImagePreview();
+      window.updateImagePreview();
       window.scrollTo(0, 0);
-    }
+    };
 
-    function updateImagePreview() {
+    window.updateImagePreview = function() {
       const url = document.getElementById('edit-image').value;
       const img = document.getElementById('image-preview');
       const placeholder = document.getElementById('image-placeholder');
@@ -408,19 +444,19 @@
         img.classList.add('hidden');
         placeholder.classList.remove('hidden');
       }
-    }
+    };
 
-    function hideAdminForm() {
+    window.hideAdminForm = function() {
       document.getElementById('admin-form-container').classList.add('hidden');
       document.getElementById('admin-form').reset();
-    }
+    };
 
-    document.getElementById('admin-form').addEventListener('submit', (e) => {
+    document.getElementById('admin-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const id = document.getElementById('edit-id').value;
+      const docId = id ? id : Date.now().toString();
       
       const newProd = {
-        id: id ? Number(id) : Date.now(),
         title: document.getElementById('edit-title').value,
         amazonLink: document.getElementById('edit-link').value,
         price: Number(document.getElementById('edit-price').value),
@@ -433,34 +469,26 @@
         reviews: 0
       };
 
-      if (id) {
-        products = products.map(p => p.id === Number(id) ? { ...p, ...newProd } : p);
-      } else {
-        products.unshift(newProd);
-      }
-
-      localStorage.setItem('amazon_affiliate_products', JSON.stringify(products));
-      hideAdminForm();
-      renderAdminProducts();
+      // Salva no Firestore
+      await setDoc(doc(db, 'products', docId), newProd);
+      
+      window.hideAdminForm();
     });
 
-    function editProduct(id) {
-      const p = products.find(prod => prod.id === id);
-      if (p) showAdminForm(p);
-    }
+    window.editProduct = function(id) {
+      const p = products.find(prod => prod.id == id);
+      if (p) window.showAdminForm(p);
+    };
 
-    function deleteProduct(id) {
+    window.deleteProduct = async function(id) {
       if (confirm('Tem certeza que deseja excluir este produto?')) {
-        products = products.filter(p => p.id !== id);
-        localStorage.setItem('amazon_affiliate_products', JSON.stringify(products));
-        renderAdminProducts();
+        await deleteDoc(doc(db, 'products', id.toString()));
       }
-    }
+    };
 
     // Inicialização
     lucide.createIcons();
-    navigateTo('home');
-
+    window.navigateTo('home');
   </script>
 </body>
 </html>
