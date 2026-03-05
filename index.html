@@ -175,12 +175,32 @@
             <input type="number" step="0.01" id="edit-price" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2">
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700">URL da Imagem</label>
+            <label class="block text-sm font-medium text-gray-700">URL da Imagem Principal</label>
             <div class="mt-1 flex gap-3 items-start">
-              <input type="url" id="edit-image" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2" oninput="window.updateImagePreview()">
+              <input type="url" id="edit-image" required class="block w-full rounded-md border-gray-300 shadow-sm border p-2" oninput="window.updateImagePreview('edit-image', 'image-preview', 'image-placeholder')">
               <div class="h-10 w-10 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">
                 <img id="image-preview" src="" class="h-full w-full object-contain hidden">
                 <i data-lucide="image" id="image-placeholder" class="h-5 w-5 text-gray-400"></i>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">URL da Imagem 2 (Opcional)</label>
+            <div class="mt-1 flex gap-3 items-start">
+              <input type="url" id="edit-image-2" class="block w-full rounded-md border-gray-300 shadow-sm border p-2" oninput="window.updateImagePreview('edit-image-2', 'image-preview-2', 'image-placeholder-2')">
+              <div class="h-10 w-10 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">
+                <img id="image-preview-2" src="" class="h-full w-full object-contain hidden">
+                <i data-lucide="image" id="image-placeholder-2" class="h-5 w-5 text-gray-400"></i>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">URL da Imagem 3 (Opcional)</label>
+            <div class="mt-1 flex gap-3 items-start">
+              <input type="url" id="edit-image-3" class="block w-full rounded-md border-gray-300 shadow-sm border p-2" oninput="window.updateImagePreview('edit-image-3', 'image-preview-3', 'image-placeholder-3')">
+              <div class="h-10 w-10 flex-shrink-0 border border-gray-200 rounded-md overflow-hidden bg-gray-50 flex items-center justify-center">
+                <img id="image-preview-3" src="" class="h-full w-full object-contain hidden">
+                <i data-lucide="image" id="image-placeholder-3" class="h-5 w-5 text-gray-400"></i>
               </div>
             </div>
           </div>
@@ -326,8 +346,15 @@
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow flex flex-col group">
               <div class="relative aspect-square overflow-hidden bg-gray-100">
                 ${p.badge ? `<div class="absolute top-3 left-3 z-10 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-sm uppercase tracking-wide">${p.badge}</div>` : ''}
-                <img src="${p.image}" alt="${p.title}" class="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500 bg-white p-2">
+                <img src="${p.image}" alt="${p.title}" id="main-img-${p.id}" class="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-500 bg-white p-2">
               </div>
+              ${(p.image2 || p.image3) ? `
+              <div class="flex gap-2 p-2 bg-gray-50 border-b border-gray-100 justify-center">
+                <img src="${p.image}" class="h-12 w-12 object-contain bg-white border border-gray-200 rounded cursor-pointer hover:border-orange-500" onclick="document.getElementById('main-img-${p.id}').src='${p.image}'">
+                ${p.image2 ? `<img src="${p.image2}" class="h-12 w-12 object-contain bg-white border border-gray-200 rounded cursor-pointer hover:border-orange-500" onclick="document.getElementById('main-img-${p.id}').src='${p.image2}'">` : ''}
+                ${p.image3 ? `<img src="${p.image3}" class="h-12 w-12 object-contain bg-white border border-gray-200 rounded cursor-pointer hover:border-orange-500" onclick="document.getElementById('main-img-${p.id}').src='${p.image3}'">` : ''}
+              </div>
+              ` : ''}
               <div class="p-5 flex flex-col flex-1">
                 <div class="text-xs text-gray-500 mb-2 font-medium uppercase tracking-wider">${p.category}</div>
                 <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2 leading-tight group-hover:text-orange-600 transition-colors">${p.title}</h3>
@@ -422,19 +449,23 @@
       document.getElementById('edit-link').value = product ? product.amazonLink : 'https://amazon.com';
       document.getElementById('edit-price').value = product ? product.price : '';
       document.getElementById('edit-image').value = product ? product.image : 'https://picsum.photos/seed/new/600/600';
+      document.getElementById('edit-image-2').value = product && product.image2 ? product.image2 : '';
+      document.getElementById('edit-image-3').value = product && product.image3 ? product.image3 : '';
       document.getElementById('edit-desc').value = product ? product.description : '';
       document.getElementById('edit-category').value = product ? product.category : 'Geral';
       document.getElementById('edit-badge').value = product && product.badge ? product.badge : '';
       document.getElementById('edit-hidden').checked = product && product.hidden ? true : false;
       
-      window.updateImagePreview();
+      window.updateImagePreview('edit-image', 'image-preview', 'image-placeholder');
+      window.updateImagePreview('edit-image-2', 'image-preview-2', 'image-placeholder-2');
+      window.updateImagePreview('edit-image-3', 'image-preview-3', 'image-placeholder-3');
       window.scrollTo(0, 0);
     };
 
-    window.updateImagePreview = function() {
-      const url = document.getElementById('edit-image').value;
-      const img = document.getElementById('image-preview');
-      const placeholder = document.getElementById('image-placeholder');
+    window.updateImagePreview = function(inputId, imgId, placeholderId) {
+      const url = document.getElementById(inputId).value;
+      const img = document.getElementById(imgId);
+      const placeholder = document.getElementById(placeholderId);
       if (url) {
         img.src = url;
         img.classList.remove('hidden');
@@ -461,6 +492,8 @@
         amazonLink: document.getElementById('edit-link').value,
         price: Number(document.getElementById('edit-price').value),
         image: document.getElementById('edit-image').value,
+        image2: document.getElementById('edit-image-2').value,
+        image3: document.getElementById('edit-image-3').value,
         description: document.getElementById('edit-desc').value,
         category: document.getElementById('edit-category').value,
         badge: document.getElementById('edit-badge').value,
